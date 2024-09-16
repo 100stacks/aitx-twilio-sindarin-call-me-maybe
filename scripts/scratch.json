@@ -1,0 +1,129 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "hang_up_call": {
+            "_description": "When Bailey should end the call and hang up the phone.",
+            "_examples": [
+                {
+                    "user says": "Thank you, goodbye",
+                    "assistant action includes": {
+                        "hang_up_call": "true"
+                    }
+                }
+            ]
+        },
+				"press_phone_keys": {
+				    "_description": "When you should press a key or keys to navigate a phone tree.",
+				    "_examples": [
+				        {
+						         "user says": "I want to speak to a live agent.",
+							       "assistant action includes": {
+										    "press_phone_keys": [ 5 ]
+							       }
+				        }
+					  ],
+					  "type": "array"
+				},
+        "save_email_address": {
+            "_action_type": "update_state",
+            "_description": "When Bailey should commit the user's email address to memory. She should always confirm that she has the correct email address afterwards.",
+            "_examples": [
+                {
+                    "user says": "<provides email address>",
+                    "assistant action includes": {
+                        "save_email_address": {
+                            "email_address": "<email address>"
+                        }
+                    }
+                }
+            ],
+            "type": "object",
+            "required": [
+                "email_address"
+            ],
+            "_validators": {
+                "email_address": "email"
+            }
+        },
+        "save_time_for_call": {
+            "_action_type": "update_state",
+            "_description": "When Bailey should commit the time for the follow-up call to memory. She should always confirm that she has the correct time afterwards.",
+            "_examples": [
+                {
+                    "user says": "<user says what time they are available for a call>",
+                    "assistant action includes": {
+                        "save_time_for_call": {
+                            "followup-datetime": "<datetime iso formatted>"
+                        }
+                    }
+                }
+            ],
+            "type": "object",
+            "required": [
+                "followup-datetime"
+            ],
+            "_validators": {
+                "followup-datetime": "datetimeiso"
+            }
+        },
+        "confirm_email_address": {
+            "_action_type": "update_state",
+            "_depends_on": [
+                "state.email_address"
+            ],
+            "_description": "When Bailey should confirm that she heard the user's email address correctly.",
+            "_examples": [
+                {
+                    "user says": "Yes, that's correct",
+                    "assistant action includes": {
+                        "confirm_email_address": {
+                            "email_address_confirmed": "true"
+                        }
+                    }
+                }
+            ],
+            "type": "object",
+            "required": [
+                "email_address_confirmed"
+            ]
+        },
+        "schedule_call_with_brian": {
+            "_action_type": "webhook",
+            "_depends_on": [
+                "state.email_address",
+                "state.email_address_confirmed",
+                "state.followup-datetime"
+            ],
+            "_webhook_constants": {
+                "url": "https://hooks.zapier.com/hooks/catch/[zapier id]/[zapier id]/",
+                "method": "POST"
+            },
+            "_description": "When Bailey should book an appointment. You should convert what the user says into datetime ISO format (yyyy-MM-ddTHH:mm). YOU MUST ALWAYS CONFIRM WHETHER THEY RECEIVED THE CALENDAR INVITATION.",
+            "_examples": [
+                {
+                    "user says": "<provides email address>",
+                    "assistant action includes": {
+                        "schedule_call_with_brian": {
+                            "firstName": "<first name>",
+                            "company": "<company name>",
+                            "datetime": "<datetime iso formatted>",
+                            "email_address": "<email address>"
+                        }
+                    }
+                }
+            ],
+            "type": "object",
+            "required": [
+                "firstName",
+                "company",
+                "datetime",
+                "email_address"
+            ],
+            "_validators": {
+                "email_address": "email",
+                "datetime": "datetimeiso"
+            }
+        }
+    }
+}

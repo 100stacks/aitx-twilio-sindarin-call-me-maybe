@@ -1,0 +1,101 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "forward_call": {
+        "_description": "Some description",
+        "_examples": [
+          {
+            "user says": "call me",
+            "assistant action includes": {
+              "forward_call": "+18005551212"
+            }
+          }
+        ],
+        "type": "string"
+      },
+      "identify_tone": {
+        "_action_type": "update_state",
+        "_description": "Determine tone of a conversation",
+        "_examples": [
+          {
+            "user says": "this is pissing me off",
+            "assistant action includes": {
+              "identify_tone": {
+                "tone": "angry"
+              }
+            }
+          },
+          {
+            "user says": "if user keeps repeating themself",
+            "assistant action includes": {
+              "identify_tone": {
+                "tone": "angry"
+              }
+            }
+          },
+          {
+            "user says": "thank you so much, this is going great!",
+            "assistant action includes": {
+              "identify_tone": {
+                "tone": "happy"
+              }
+            }
+          }
+        ],
+        "type": "object"
+      },
+      "do_a_thing": {
+        "_description": "When Concierge should do a thing.",
+        "_examples": [
+          {
+            "user says": "Can you do something?",
+            "assistant action includes": {
+              "do_a_thing": true
+            }
+          }
+        ],
+        "type": "boolean"
+      },
+      "remember_user_name": {
+        "_action_type": "update_state",
+        "_description": "When Concierge should commit the user's name to memory.",
+        "_examples": [
+          {
+            "user says": "I'm Steve",
+            "assistant action includes": {
+              "remember_user_name": {
+                "user_name": "Steve"
+              }
+            }
+          }
+        ],
+        "type": "object",
+        "required": [
+          "user_name"
+        ]
+      },
+      "fetch_current_weather": {
+        "_action_type": "webhook",
+        "_webhook_constants": {
+          "url": "https://goweather.herokuapp.com/weather/<city>",
+          "method": "GET"
+        },
+        "_description": "When Concierge should fetch the weather for the city.",
+        "_examples": [
+          {
+            "user says": "What's the weather in Albuquerque?",
+            "assistant action includes": {
+              "fetch_current_weather": {
+                "city": "Albuquerque"
+              }
+            }
+          }
+        ],
+        "type": "object",
+        "required": [
+          "city"
+        ]
+      }
+    }
+  }
